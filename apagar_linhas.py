@@ -2,41 +2,56 @@ import streamlit as st
 from openpyxl import load_workbook
 import os
 
-st.set_page_config(page_title="Limpeza - Etapa 1", layout="centered")
+st.set_page_config(page_title="Limpeza - Etapa 2", layout="centered")
 st.title("Limpeza básica do Excel")
 
 def limpar_excel(uploaded_file, arquivo_saida):
     wb = load_workbook(uploaded_file)
     ws = wb.worksheets[0]  # primeira aba
 
-    # 1) Remover mesclagem SEM replicar valores
+    # =========================
+    # 1) Remover mesclagem (sem replicar)
+    # =========================
     merged_ranges = list(ws.merged_cells.ranges)
 
     for merged in merged_ranges:
-        # valor original (célula superior esquerda)
         valor = ws.cell(
             row=merged.min_row,
             column=merged.min_col
         ).value
 
-        # desmescla
         ws.unmerge_cells(str(merged))
 
-        # garante que o valor fique SOMENTE na célula original
         ws.cell(
             row=merged.min_row,
             column=merged.min_col
         ).value = valor
 
+    # =========================
     # 2) Apagar linhas 1 a 5
+    # =========================
     ws.delete_rows(1, 5)
+
+    # =========================
+    # 3) Subir coluna I (Compl.lcto) 1 linha
+    # =========================
+    col_compl = 9  # coluna I
+    ultima_linha = ws.max_row
+
+    for row in range(2, ultima_linha + 1):
+        ws.cell(row=row - 1, column=col_compl).value = (
+            ws.cell(row=row, column=col_compl).value
+        )
+
+    # Limpa a última célula da coluna I
+    ws.cell(row=ultima_linha, column=col_compl).value = None
 
     wb.save(arquivo_saida)
 
 arquivo = st.file_uploader("Envie o Excel", type=["xlsx"])
 
 if arquivo:
-    saida = "limpo_etapa1.xlsx"
+    saida = "limpo_etapa2.xlsx"
 
     limpar_excel(arquivo, saida)
 
@@ -44,7 +59,7 @@ if arquivo:
         st.download_button(
             "Baixar arquivo limpo",
             f,
-            file_name="limpo_etapa1.xlsx"
+            file_name="limpo_etapa2.xlsx"
         )
 
     os.remove(saida)
