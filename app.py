@@ -4,10 +4,11 @@ from openpyxl import load_workbook
 import os
 
 st.set_page_config(page_title="Limpeza de Excel", layout="centered")
+st.title("Limpeza de Excel")
 
-def desmesclar_pagina_6(arquivo_entrada, arquivo_temp):
+def desmesclar_pagina_1(arquivo_entrada, arquivo_temp):
     wb = load_workbook(arquivo_entrada)
-    ws = wb.worksheets[0]  # página 6 fixa
+    ws = wb.worksheets[0]  # PRIMEIRA E ÚNICA ABA
 
     for merged in list(ws.merged_cells.ranges):
         valor = ws.cell(
@@ -31,26 +32,31 @@ def desmesclar_pagina_6(arquivo_entrada, arquivo_temp):
 def tratar_excel(arquivo_entrada, arquivo_saida):
     arquivo_temp = "temp_sem_mescla.xlsx"
 
-    desmesclar_pagina_6(arquivo_entrada, arquivo_temp)
+    # 1) Remove mesclagem
+    desmesclar_pagina_1(arquivo_entrada, arquivo_temp)
 
+    # 2) Lê a aba
     df = pd.read_excel(arquivo_temp, sheet_name=0)
     df_original = df.copy()
 
+    # 3) Coluna I (Compl.lcto) → índice 8
     df.iloc[:, 8] = df.iloc[:, 8].shift(-1)
-    df = df[df["DT_LANÇTOS"].notna()]
 
+    # 4) Remove linhas com DT_LANÇTOS vazio (coluna D → índice 3)
+    df = df[df.iloc[:, 3].notna()]
+
+    # 5) Salva resultado final
     with pd.ExcelWriter(arquivo_saida, engine="openpyxl") as writer:
         df.to_excel(writer, sheet_name="ARRUMADO", index=False)
         df_original.to_excel(writer, sheet_name="ORIGINAL", index=False)
 
+    # 6) Limpa arquivos temporários
     os.remove(arquivo_temp)
-
-st.title("Limpeza de Excel")
 
 arquivo = st.file_uploader("Envie o arquivo Excel", type=["xlsx"])
 
 if arquivo:
-    saida = "resultado.xlsx"
+    saida = "arquivo_tratado.xlsx"
     tratar_excel(arquivo, saida)
 
     with open(saida, "rb") as f:
@@ -61,4 +67,3 @@ if arquivo:
         )
 
     os.remove(saida)
-
