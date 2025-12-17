@@ -2,7 +2,7 @@ import streamlit as st
 from openpyxl import load_workbook
 import os
 
-st.set_page_config(page_title="Limpeza - Etapa 2", layout="centered")
+st.set_page_config(page_title="Limpeza - Etapa 3", layout="centered")
 st.title("Limpeza básica do Excel")
 
 def limpar_excel(uploaded_file, arquivo_saida):
@@ -43,15 +43,23 @@ def limpar_excel(uploaded_file, arquivo_saida):
             ws.cell(row=row, column=col_compl).value
         )
 
-    # Limpa a última célula da coluna I
     ws.cell(row=ultima_linha, column=col_compl).value = None
+
+    # =========================
+    # 4) Apagar linhas com Dt.lançtos vazio (coluna D)
+    # =========================
+    col_data = 4  # coluna D
+
+    for row in range(ws.max_row, 1, -1):
+        if ws.cell(row=row, column=col_data).value in (None, ""):
+            ws.delete_rows(row)
 
     wb.save(arquivo_saida)
 
 arquivo = st.file_uploader("Envie o Excel", type=["xlsx"])
 
 if arquivo:
-    saida = "limpo_etapa2.xlsx"
+    saida = "limpo_final.xlsx"
 
     limpar_excel(arquivo, saida)
 
@@ -59,7 +67,7 @@ if arquivo:
         st.download_button(
             "Baixar arquivo limpo",
             f,
-            file_name="limpo_etapa2.xlsx"
+            file_name="limpo_final.xlsx"
         )
 
     os.remove(saida)
