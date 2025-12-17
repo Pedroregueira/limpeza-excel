@@ -32,19 +32,20 @@ def limpar_excel(uploaded_file, arquivo_saida):
     # 2) Apagar linhas 1 a 5
     # =================================================
     ws.delete_rows(1, 5)
+# =================================================
+# 3) Subir coluna I (Compl.lcto) a partir da linha 2
+# =================================================
+col_compl = 9  # coluna I
+ultima_linha = ws.max_row
 
-    # =================================================
-    # 3) Subir coluna I (Compl.lcto) 1 linha
-    # =================================================
-    col_compl = 9  # coluna I
-    ultima_linha = ws.max_row
+for row in range(3, ultima_linha + 1):
+    ws.cell(row=row - 1, column=col_compl).value = (
+        ws.cell(row=row, column=col_compl).value
+    )
 
-    for row in range(2, ultima_linha + 1):
-        ws.cell(row=row - 1, column=col_compl).value = (
-            ws.cell(row=row, column=col_compl).value
-        )
+# Limpa a última célula da coluna I
+ws.cell(row=ultima_linha, column=col_compl).value = None
 
-    ws.cell(row=ultima_linha, column=col_compl).value = None
 
     # =================================================
     # 4) Apagar linhas com Dt.lançtos vazio (coluna D)
@@ -79,3 +80,4 @@ if arquivo:
         )
 
     os.remove(nome_saida)
+
