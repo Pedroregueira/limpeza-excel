@@ -7,7 +7,7 @@ st.set_page_config(page_title="Limpeza de Excel", layout="centered")
 
 def desmesclar_pagina_6(arquivo_entrada, arquivo_temp):
     wb = load_workbook(arquivo_entrada)
-    ws = wb.worksheets[5]  # página 6 fixa
+    ws = wb.worksheets[0]  # página 6 fixa
 
     for merged in list(ws.merged_cells.ranges):
         valor = ws.cell(
@@ -33,7 +33,7 @@ def tratar_excel(arquivo_entrada, arquivo_saida):
 
     desmesclar_pagina_6(arquivo_entrada, arquivo_temp)
 
-    df = pd.read_excel(arquivo_temp, sheet_name=5)
+    df = pd.read_excel(arquivo_temp, sheet_name=0)
     df_original = df.copy()
 
     df.iloc[:, 8] = df.iloc[:, 8].shift(-1)
@@ -61,3 +61,4 @@ if arquivo:
         )
 
     os.remove(saida)
+
