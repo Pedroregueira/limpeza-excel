@@ -8,7 +8,7 @@ st.title("Limpeza de Excel")
 
 def desmesclar_pagina_1(arquivo_entrada, arquivo_temp):
     wb = load_workbook(arquivo_entrada)
-    ws = wb.worksheets[0]  # PRIMEIRA E ÚNICA ABA
+    ws = wb.worksheets[0]  # PRIMEIRA ABA
 
     for merged in list(ws.merged_cells.ranges):
         valor = ws.cell(
@@ -35,8 +35,14 @@ def tratar_excel(arquivo_entrada, arquivo_saida):
     # 1) Remove mesclagem
     desmesclar_pagina_1(arquivo_entrada, arquivo_temp)
 
-    # 2) Lê a aba
-    df = pd.read_excel(arquivo_temp, sheet_name=0)
+    # 2) Lê ignorando linhas 1 a 5 (linha 6 = cabeçalho)
+    df = pd.read_excel(
+        arquivo_temp,
+        sheet_name=0,
+        header=5
+    )
+
+    # Guarda original
     df_original = df.copy()
 
     # 3) Coluna I (Compl.lcto) → índice 8
@@ -45,12 +51,12 @@ def tratar_excel(arquivo_entrada, arquivo_saida):
     # 4) Remove linhas com DT_LANÇTOS vazio (coluna D → índice 3)
     df = df[df.iloc[:, 3].notna()]
 
-    # 5) Salva resultado final
+    # 5) Gera Excel final
     with pd.ExcelWriter(arquivo_saida, engine="openpyxl") as writer:
         df.to_excel(writer, sheet_name="ARRUMADO", index=False)
         df_original.to_excel(writer, sheet_name="ORIGINAL", index=False)
 
-    # 6) Limpa arquivos temporários
+    # 6) Limpa temporário
     os.remove(arquivo_temp)
 
 arquivo = st.file_uploader("Envie o arquivo Excel", type=["xlsx"])
