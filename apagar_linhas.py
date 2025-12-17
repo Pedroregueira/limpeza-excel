@@ -8,7 +8,15 @@ st.title("Limpeza automática de despesas")
 
 def limpar_excel(uploaded_file, arquivo_saida):
     wb = load_workbook(uploaded_file)
-    ws = wb.worksheets[0]  # primeira aba
+
+    # =================================================
+    # 0) Guardar aba original como página 2
+    # =================================================
+    aba_original = wb.worksheets[0]
+    copia_original = wb.copy_worksheet(aba_original)
+    copia_original.title = "ORIGINAL"
+
+    ws = wb.worksheets[0]  # vamos trabalhar só na primeira aba
 
     # =================================================
     # 1) Remover mesclagem (sem replicar valores)
@@ -35,7 +43,6 @@ def limpar_excel(uploaded_file, arquivo_saida):
 
     # =================================================
     # 3) Subir coluna I (Compl.lcto) a partir da linha 2
-    #    (linha 1 fica intacta)
     # =================================================
     col_compl = 9  # coluna I
     ultima_linha = ws.max_row
@@ -45,7 +52,6 @@ def limpar_excel(uploaded_file, arquivo_saida):
             ws.cell(row=row, column=col_compl).value
         )
 
-    # Limpa a última célula da coluna I
     ws.cell(row=ultima_linha, column=col_compl).value = None
 
     # =================================================
