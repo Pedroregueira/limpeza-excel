@@ -9,25 +9,24 @@ def limpar_excel(uploaded_file, arquivo_saida):
     wb = load_workbook(uploaded_file)
     ws = wb.worksheets[0]  # primeira aba
 
-    # 1) Remover mesclagem
+    # 1) Remover mesclagem SEM replicar valores
     merged_ranges = list(ws.merged_cells.ranges)
 
     for merged in merged_ranges:
+        # valor original (célula superior esquerda)
         valor = ws.cell(
             row=merged.min_row,
             column=merged.min_col
         ).value
 
+        # desmescla
         ws.unmerge_cells(str(merged))
 
-        for row in ws.iter_rows(
-            min_row=merged.min_row,
-            max_row=merged.max_row,
-            min_col=merged.min_col,
-            max_col=merged.max_col
-        ):
-            for cell in row:
-                cell.value = valor
+        # garante que o valor fique SOMENTE na célula original
+        ws.cell(
+            row=merged.min_row,
+            column=merged.min_col
+        ).value = valor
 
     # 2) Apagar linhas 1 a 5
     ws.delete_rows(1, 5)
