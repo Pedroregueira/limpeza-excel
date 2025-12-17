@@ -2,30 +2,50 @@ import streamlit as st
 from openpyxl import load_workbook
 import os
 
-st.set_page_config(page_title="Teste - Apagar Linhas", layout="centered")
-st.title("Apagar linhas 1 a 5")
+st.set_page_config(page_title="Teste - Remover Mesclagem", layout="centered")
+st.title("Remover células mescladas")
 
-def apagar_linhas_1_a_5(uploaded_file, arquivo_saida):
+def remover_mesclagem(uploaded_file, arquivo_saida):
     wb = load_workbook(uploaded_file)
     ws = wb.worksheets[0]  # primeira aba
 
-    # Apaga fisicamente as linhas 1 a 5
-    ws.delete_rows(1, 5)
+    # Copiamos a lista porque ela muda durante o loop
+    merged_ranges = list(ws.merged_cells.ranges)
+
+    for merged in merged_ranges:
+        # Valor da célula superior esquerda
+        valor = ws.cell(
+            row=merged.min_row,
+            column=merged.min_col
+        ).value
+
+        # Desmescla
+        ws.unmerge_cells(str(merged))
+
+        # Preenche todas as células com o valor
+        for row in ws.iter_rows(
+            min_row=merged.min_row,
+            max_row=merged.max_row,
+            min_col=merged.min_col,
+            max_col=merged.max_col
+        ):
+            for cell in row:
+                cell.value = valor
 
     wb.save(arquivo_saida)
 
 arquivo = st.file_uploader("Envie o Excel", type=["xlsx"])
 
 if arquivo:
-    saida = "sem_linhas_1_a_5.xlsx"
+    saida = "sem_mesclagem.xlsx"
 
-    apagar_linhas_1_a_5(arquivo, saida)
+    remover_mesclagem(arquivo, saida)
 
     with open(saida, "rb") as f:
         st.download_button(
             "Baixar arquivo",
             f,
-            file_name="sem_linhas_1_a_5.xlsx"
+            file_name="sem_mesclagem.xlsx"
         )
 
     os.remove(saida)
