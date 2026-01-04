@@ -96,7 +96,7 @@ if arquivo:
 
     # >>> INFORME AQUI <<<
     SPREADSHEET_ID = "/d/163fTHvX6-ygJD0RPnOwAmbKspUnE4olv7JoX_dUcJJk/edit?gid=0#gid=0"
-    ABA_DESTINO = "RLT_OC"
+    ABA_DESTINO = "RLTDESPESAS"
 
     url = append_to_google_sheets(
         nome_arquivo_excel=nome_saida,
@@ -108,3 +108,4 @@ if arquivo:
     st.write(url)
 
     os.remove(nome_saida)
+
