@@ -53,16 +53,16 @@ def limpar_excel(uploaded_file, arquivo_saida):
 
     ws.cell(row=ultima_linha, column=col_compl).value = None
 
-    # =================================================
-    # 4) Remover linhas com Desc.cta EXACT
-    #    "CUSTO C/ TERCEIROS PESSOA JURIDI"
-    # =================================================
-    col_desc_cta = 5  # coluna E
+# =================================================
+# 4) Remover linhas com Desc.cta EXACT
+#    "CUSTO C/ TERCEIROS PESSOA JURIDI"
+# =================================================
+col_desc_cta = 5  # coluna E
 
-    for row in range(ws.max_row, 1, -1):
-        valor = ws.cell(row=row, column=col_desc_cta).value
+for row in range(ws.max_row, 1, -1):
+    valor = ws.cell(row=row, column=col_desc_cta).value
     if valor and valor.strip() == "CUSTO C/ TERCEIROS PESSOA JURIDI":
-    ws.delete_rows(row)
+        ws.delete_rows(row)
 
     # =================================================
     # 5) Apagar linhas com Dt.lançtos vazio (coluna D)
@@ -97,3 +97,4 @@ if arquivo:
         )
 
     os.remove(nome_saida)
+
