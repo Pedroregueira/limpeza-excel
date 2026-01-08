@@ -4,15 +4,46 @@ import pandas as pd
 import re
 from io import BytesIO
 
-st.set_page_config(page_title="Extrator de PDF", layout="centered")
+# ==============================
+# CONFIG STREAMLIT (PADRÃO CLIENTE)
+# ==============================
+st.set_page_config(
+    page_title="Extrator de Horas (PDF)",
+    layout="wide"
+)
 
-st.title("📄 Extrator de Horas do PDF")
+# Centralização visual
+st.markdown(
+    """
+    <style>
+        .block-container {
+            max-width: 1200px;
+            margin: auto;
+            padding-top: 2rem;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
+st.markdown("## 📄 Extrator de Horas (PDF)")
+st.markdown(
+    "Aplicação para extração automática de horas a partir de arquivos PDF, "
+    "com geração de relatório estruturado."
+)
+st.divider()
+
+# ==============================
+# UPLOAD
+# ==============================
 uploaded_pdf = st.file_uploader(
-    "Faça upload do PDF",
+    "📎 Envie o arquivo PDF",
     type=["pdf"]
 )
 
+# ==============================
+# FUNÇÃO DE EXTRAÇÃO
+# ==============================
 def extrair_pdf(uploaded_pdf):
     linhas = []
 
@@ -48,6 +79,9 @@ def extrair_pdf(uploaded_pdf):
 
     return pd.DataFrame(linhas)
 
+# ==============================
+# PROCESSAMENTO
+# ==============================
 if uploaded_pdf:
     st.success("PDF carregado com sucesso!")
 
@@ -57,15 +91,23 @@ if uploaded_pdf:
         if df.empty:
             st.warning("Nenhum dado encontrado no PDF.")
         else:
-            st.dataframe(df, use_container_width=True)
+            st.markdown("### 📑 Pré-visualização do relatório")
+
+            st.dataframe(
+                df,
+                use_container_width=True,
+                hide_index=True
+            )
+
+            st.divider()
 
             buffer = BytesIO()
             df.to_excel(buffer, index=False)
             buffer.seek(0)
 
             st.download_button(
-                label="⬇️ Baixar Excel",
+                label="⬇️ Baixar relatório em Excel",
                 data=buffer,
-                file_name="resultado_pdf.xlsx",
+                file_name="RLT_HORAS_PDF.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
