@@ -5,15 +5,31 @@ import pandas as pd
 import os
 
 # ==============================
-# CONFIG STREAMLIT
+# CONFIG STREAMLIT (PADRÃO CLIENTE)
 # ==============================
 st.set_page_config(
     page_title="Relatório de Despesas",
-    layout="centered"
+    layout="wide"
+)
+
+# Centralização visual (padrão corporativo)
+st.markdown(
+    """
+    <style>
+        .block-container {
+            max-width: 1200px;
+            margin: auto;
+            padding-top: 2rem;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
 st.markdown("## 📊 Relatório de Despesas")
-st.markdown("Arquivo tratado automaticamente conforme padrão corporativo.")
+st.markdown(
+    "Arquivo tratado automaticamente conforme padrão corporativo."
+)
 st.divider()
 
 # ==============================
@@ -112,5 +128,3 @@ if arquivo:
         )
 
     os.remove(nome_saida)
-
-
