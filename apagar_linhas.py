@@ -61,8 +61,9 @@ def limpar_excel(uploaded_file, arquivo_saida):
     col_desc_cta = 3
     for row in range(ws.max_row, 1, -1):
         valor = ws.cell(row=row, column=col_desc_cta).value
-        if valor and valor.strip() == "CUSTO C/ TERCEIROS PESSOA JURIDI":
-            ws.delete_rows(row)
+            if valor and valor.strip() == "CUSTO C/ TERCEIROS PESSOA JURIDI":
+                ws.delete_rows(row)
+
 
     # 5) Remover linhas sem data
     col_data = 4
@@ -118,3 +119,4 @@ if arquivo:
         )
 
     os.remove(nome_saida)
+
