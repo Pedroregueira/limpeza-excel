@@ -23,3 +23,4 @@ if arquivo:
         resultado,
         file_name=f"arquivo_limpo.{ 'xlsx' if tipo == 'Excel' else 'pdf' }"
     )
+
