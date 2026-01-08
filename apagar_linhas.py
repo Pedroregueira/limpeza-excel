@@ -9,7 +9,7 @@ import os
 # ==============================
 st.set_page_config(
     page_title="Relatório de Despesas",
-    layout="wide"
+    layout="centred"
 )
 
 st.markdown("## 📊 Relatório de Despesas")
@@ -112,3 +112,4 @@ if arquivo:
         )
 
     os.remove(nome_saida)
+
