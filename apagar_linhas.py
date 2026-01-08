@@ -57,7 +57,7 @@ def limpar_excel(uploaded_file, arquivo_saida):
     # 4) Remover linhas com Desc.cta EXACT
     #    "CUSTO C/ TERCEIROS PESSOA JURIDI"
     # =================================================
-    col_desc_cta = 5  # coluna E
+    col_desc_cta = 3  # coluna C
 
     for row in range(ws.max_row, 1, -1):
         valor = ws.cell(row=row, column=col_desc_cta).value
@@ -97,3 +97,4 @@ if arquivo:
         )
 
     os.remove(nome_saida)
+
