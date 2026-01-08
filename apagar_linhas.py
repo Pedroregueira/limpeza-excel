@@ -16,7 +16,7 @@ def limpar_excel(uploaded_file, arquivo_saida):
     copia_original = wb.copy_worksheet(aba_original)
     copia_original.title = "ORIGINAL"
 
-    ws = wb.worksheets[0]  # vamos trabalhar só na primeira aba
+    ws = wb.worksheets[0]  # trabalhar apenas na primeira aba
 
     # =================================================
     # 1) Remover mesclagem (sem replicar valores)
@@ -30,7 +30,6 @@ def limpar_excel(uploaded_file, arquivo_saida):
         ).value
 
         ws.unmerge_cells(str(merged))
-
         ws.cell(
             row=merged.min_row,
             column=merged.min_col
@@ -55,7 +54,18 @@ def limpar_excel(uploaded_file, arquivo_saida):
     ws.cell(row=ultima_linha, column=col_compl).value = None
 
     # =================================================
-    # 4) Apagar linhas com Dt.lançtos vazio (coluna D)
+    # 4) Remover linhas com Desc.cta EXACT
+    #    "CUSTO C/ TERCEIROS PESSOA JURIDI"
+    # =================================================
+    col_desc_cta = 5  # coluna E
+
+    for row in range(ws.max_row, 1, -1):
+        valor = ws.cell(row=row, column=col_desc_cta).value
+    if valor and valor.strip() == "CUSTO C/ TERCEIROS PESSOA JURIDI":
+    ws.delete_rows(row)
+
+    # =================================================
+    # 5) Apagar linhas com Dt.lançtos vazio (coluna D)
     # =================================================
     col_data = 4  # coluna D
 
