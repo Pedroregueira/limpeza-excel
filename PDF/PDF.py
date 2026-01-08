@@ -1,8 +1,19 @@
+import streamlit as st
 import pdfplumber
 import pandas as pd
 import re
+from io import BytesIO
 
-def extrair_pdf(uploaded_pdf, arquivo_saida):
+st.set_page_config(page_title="Extrator de PDF", layout="centered")
+
+st.title("📄 Extrator de Horas do PDF")
+
+uploaded_pdf = st.file_uploader(
+    "Faça upload do PDF",
+    type=["pdf"]
+)
+
+def extrair_pdf(uploaded_pdf):
     linhas = []
 
     padrao = re.compile(r"^(.*?)\s+(\d+:\d{2})\s+([\d\.]+,\d{2})$")
@@ -35,4 +46,26 @@ def extrair_pdf(uploaded_pdf, arquivo_saida):
                         "Valor": valor
                     })
 
-    pd.DataFrame(linhas).to_excel(arquivo_saida, index=False)
+    return pd.DataFrame(linhas)
+
+if uploaded_pdf:
+    st.success("PDF carregado com sucesso!")
+
+    if st.button("🔍 Extrair dados"):
+        df = extrair_pdf(uploaded_pdf)
+
+        if df.empty:
+            st.warning("Nenhum dado encontrado no PDF.")
+        else:
+            st.dataframe(df, use_container_width=True)
+
+            buffer = BytesIO()
+            df.to_excel(buffer, index=False)
+            buffer.seek(0)
+
+            st.download_button(
+                label="⬇️ Baixar Excel",
+                data=buffer,
+                file_name="resultado_pdf.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
