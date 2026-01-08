@@ -3,11 +3,9 @@ import pandas as pd
 import re
 
 def extrair_pdf(uploaded_pdf, arquivo_saida):
-    linhas_validas = []
+    linhas = []
 
-    padrao = re.compile(
-        r"^(.*?)\s+(\d+:\d{2})\s+([\d\.]+,\d{2})$"
-    )
+    padrao = re.compile(r"^(.*?)\s+(\d+:\d{2})\s+([\d\.]+,\d{2})$")
 
     with pdfplumber.open(uploaded_pdf) as pdf:
         for page in pdf.pages:
@@ -18,7 +16,6 @@ def extrair_pdf(uploaded_pdf, arquivo_saida):
             for linha in texto.split("\n"):
                 linha = linha.strip()
 
-                # ignora cabeçalho / rodapé
                 if (
                     linha.startswith("Reporte de Horas")
                     or linha.startswith("Período")
@@ -32,11 +29,10 @@ def extrair_pdf(uploaded_pdf, arquivo_saida):
                 match = padrao.match(linha)
                 if match:
                     projeto, horas, valor = match.groups()
-                    linhas_validas.append({
-                        "Projeto": projeto.strip(),
+                    linhas.append({
+                        "Projeto": projeto,
                         "Horas": horas,
                         "Valor": valor
                     })
 
-    df = pd.DataFrame(linhas_validas)
-    df.to_excel(arquivo_saida, index=False)
+    pd.DataFrame(linhas).to_excel(arquivo_saida, index=False)
