@@ -1,17 +1,27 @@
-from openpyxl import load_workbook
+import streamlit as st
+import os
+from excel_utils import limpar_excel
+from pdf_utils import extrair_pdf
 
-def apagar_linhas_1_a_5(arquivo_entrada, arquivo_saida):
-    wb = load_workbook(arquivo_entrada)
-    ws = wb.worksheets[0]  # primeira aba
+st.set_page_config(page_title="Ferramentas", layout="centered")
+st.title("Ferramentas Financeiras")
 
-    # Apaga linhas 1 a 5
-    ws.delete_rows(1, 5)
+tab1, tab2 = st.tabs(["📊 Excel", "📄 PDF"])
 
-    wb.save(arquivo_saida)
+with tab1:
+    excel = st.file_uploader("Envie o Excel", type=["xlsx"])
+    if excel:
+        nome = "EXCEL_LIMPO.xlsx"
+        limpar_excel(excel, nome)
+        with open(nome, "rb") as f:
+            st.download_button("Baixar Excel", f, file_name=nome)
+        os.remove(nome)
 
-
-# EXEMPLO DE USO
-apagar_linhas_1_a_5(
-    "entrada.xlsx",
-    "saida_sem_linhas_1_a_5.xlsx"
-)
+with tab2:
+    pdf = st.file_uploader("Envie o PDF", type=["pdf"])
+    if pdf:
+        nome = "PDF_CONVERTIDO.xlsx"
+        extrair_pdf(pdf, nome)
+        with open(nome, "rb") as f:
+            st.download_button("Baixar Excel", f, file_name=nome)
+        os.remove(nome)
