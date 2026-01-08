@@ -2,7 +2,7 @@ import streamlit as st
 
 # CORREÇÃO AQUI: Importar a função correta
 # Certifique-se que dentro de excel/limpar_excel.py existe uma função "processar_excel"
-from excel.limpar_excel import processar_excel 
+from excel.limpar_excel import apagar_linhas as processar_excel
 from pdf.limpar_pdf import processar_pdf
 
 st.title("Limpeza de Arquivos")
