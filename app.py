@@ -1,27 +1,25 @@
 import streamlit as st
-import os
-from excel_utils import limpar_excel
-from pdf_utils import extrair_pdf
+from excel.limpar_excel import apagar_linhas
+from pdf.limpar_pdf import pdf_utils
 
-st.set_page_config(page_title="Ferramentas", layout="centered")
-st.title("Ferramentas Financeiras")
+st.title("Limpeza de Arquivos")
 
-tab1, tab2 = st.tabs(["📊 Excel", "📄 PDF"])
+tipo = st.radio("O que você quer limpar?", ["Excel", "PDF"])
 
-with tab1:
-    excel = st.file_uploader("Envie o Excel", type=["xlsx"])
-    if excel:
-        nome = "EXCEL_LIMPO.xlsx"
-        limpar_excel(excel, nome)
-        with open(nome, "rb") as f:
-            st.download_button("Baixar Excel", f, file_name=nome)
-        os.remove(nome)
+arquivo = st.file_uploader(
+    "Faça upload do arquivo",
+    type=["xlsx", "xls"] if tipo == "Excel" else ["pdf"]
+)
 
-with tab2:
-    pdf = st.file_uploader("Envie o PDF", type=["pdf"])
-    if pdf:
-        nome = "PDF_CONVERTIDO.xlsx"
-        extrair_pdf(pdf, nome)
-        with open(nome, "rb") as f:
-            st.download_button("Baixar Excel", f, file_name=nome)
-        os.remove(nome)
+if arquivo:
+    if tipo == "Excel":
+        resultado = processar_excel(arquivo)
+    else:
+        resultado = processar_pdf(arquivo)
+
+    st.success("Arquivo processado com sucesso!")
+    st.download_button(
+        "Baixar arquivo limpo",
+        resultado,
+        file_name=f"arquivo_limpo.{ 'xlsx' if tipo == 'Excel' else 'pdf' }"
+    )
